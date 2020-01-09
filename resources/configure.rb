@@ -6,7 +6,7 @@ property :interface,            String,   name_attribute: true
 property :renderer,             String,   default: 'networkd'
 property :version,              Integer,  default: 2
 property :addresses,            Array,    default: []
-
+property :nameservers,          Array,    default: []
 property :config_file,          String,   default: '/etc/netplan/60-static-ips.yaml'
 property :template_cookbook,    String,   default: 'netplan'
 property :template_source,      String,   default: '60-static-ips.yaml.erb'
@@ -24,6 +24,11 @@ action :create do
         }
       }
     }
+    
+    if new_resource.nameservers && new_resource.nameservers.any?
+      config[:network][:ethernets][new_resource.interface.to_sym][:nameservers] ||= {}
+      config[:network][:ethernets][new_resource.interface.to_sym][:nameservers][:addresses] = new_resource.nameservers
+    end
   
     template new_resource.config_file do
       source    new_resource.template_source

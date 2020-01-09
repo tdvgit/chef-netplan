@@ -12,22 +12,22 @@ property :template_cookbook,    String,   default: 'netplan'
 property :template_source,      String,   default: '60-static-ips.yaml.erb'
 
 action :create do
-  if new_resource.addresses && new_resource.addresses.any?
+  if new_resource.addresses && new_resource.addresses.to_a.any?
     config = {
       "network" => {
         "version" => new_resource.version,
         "renderer" => new_resource.renderer,
         "ethernets" => {
           new_resource.interface => {
-            "addresses" => new_resource.addresses
+            "addresses" => new_resource.addresses.to_a
           }
         }
       }
     }
     
-    if new_resource.nameservers && new_resource.nameservers.any?
+    if new_resource.nameservers && new_resource.nameservers.to_a.any?
       config["network"]["ethernets"][new_resource.interface]["nameservers"] ||= {}
-      config["network"]["ethernets"][new_resource.interface]["nameservers"]["addresses"] = new_resource.nameservers
+      config["network"]["ethernets"][new_resource.interface]["nameservers"]["addresses"] = new_resource.nameservers.to_a
     end
   
     template new_resource.config_file do

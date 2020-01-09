@@ -14,20 +14,20 @@ property :template_source,      String,   default: '60-static-ips.yaml.erb'
 action :create do
   if new_resource.addresses && new_resource.addresses.any?
     config = {
-      network: {
-        version: new_resource.version,
-        renderer: new_resource.renderer,
-        ethernets: {
-          new_resource.interface.to_sym => {
-            addresses: new_resource.addresses
+      "network" => {
+        "version" => new_resource.version,
+        "renderer" => new_resource.renderer,
+        "ethernets" => {
+          new_resource.interface => {
+            "addresses" => new_resource.addresses
           }
         }
       }
     }
     
     if new_resource.nameservers && new_resource.nameservers.any?
-      config[:network][:ethernets][new_resource.interface.to_sym][:nameservers] ||= {}
-      config[:network][:ethernets][new_resource.interface.to_sym][:nameservers][:addresses] = new_resource.nameservers
+      config["network"]["ethernets"][new_resource.interface]["nameservers"] ||= {}
+      config["network"]["ethernets"][new_resource.interface]["nameservers"]["addresses"] = new_resource.nameservers
     end
   
     template new_resource.config_file do

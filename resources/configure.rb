@@ -13,13 +13,25 @@ property :template_source,      String,   default: '60-static-ips.yaml.erb'
 
 action :create do
   if new_resource.addresses && new_resource.addresses.to_a.any?
+    corrected_addresses   =   []
+    
+    new_resource.addresses.to_a.each do |address|
+      address             =   address.strip
+      
+      if address =~ /\/\d+$/
+        corrected_addresses << address
+      else
+        corrected_addresses << "#{address}/24"
+      end
+    end
+    
     config = {
       "network" => {
         "version" => new_resource.version,
         "renderer" => new_resource.renderer,
         "ethernets" => {
           new_resource.interface => {
-            "addresses" => new_resource.addresses.to_a
+            "addresses" => corrected_addresses
           }
         }
       }

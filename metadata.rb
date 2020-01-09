@@ -1,0 +1,6 @@
+name             "netplan"
+maintainer       "Sebastian Johnsson"
+maintainer_email "sebastian.johnsson@gmail.com"
+license          "Apache 2.0"
+description      "Configures Netplan using Chef."
+version          "0.1"

@@ -62,9 +62,3 @@ action :delete do
   end
   notifies :run, 'execute[apply_netplan_configuration]', :immediately
 end
-
-execute 'apply_netplan_configuration' do
-  command 'netplan apply'
-  user    'root'
-  action :nothing
-end

@@ -51,12 +51,8 @@ action :create do
 
       variables yaml: YAML.dump(config)
     end
-  
-    execute "apply netplan configuration" do
-      command "netplan apply"
-      user    "root"
-    end
   end
+  notifies :run, 'execute[apply netplan configuration]', :immediately
 end
 
 action :delete do
@@ -64,4 +60,11 @@ action :delete do
     action :delete
     only_if { ::File.exists?(new_resource.config_file) }
   end
+  notifies :run, 'execute[apply netplan configuration]', :immediately
+end
+
+execute "apply netplan configuration" do
+  command "netplan apply"
+  user    "root"
+  action :nothing
 end
